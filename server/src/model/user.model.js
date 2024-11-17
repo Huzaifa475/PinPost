@@ -1,9 +1,20 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import crypto from "crypto";
+
+dotenv.config({
+    path: './.env'
+});
 
 const userSchema = new mongoose.Schema({
     name: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    email: {
         type: String,
         unique: true,
         required: true
@@ -15,7 +26,7 @@ const userSchema = new mongoose.Schema({
     googleId: {
         type: String,
         required: function() {
-            return !this.isGoogleUser
+            return this.isGoogleUser;
         }
     },
     password: {
@@ -61,6 +72,15 @@ const userSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
         default: null
+    },
+    passwordResetToken: {
+        type: String
+    },
+    passwordResetTokenExpiry: {
+        type: Date
+    },
+    passwordChangedAt: {
+        type: Date
     }
 }, {timestamps: true})
 
@@ -68,21 +88,21 @@ userSchema.index({location: '2dsphere'})
 
 userSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next()
-    this.password = bcrypt.hash(this.password, 10)
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
 userSchema.methods.isValidPassword = async function (password) {
-    return bcrypt.compare(password, this.password);
+    return await bcrypt.compare(password, this.password);
 }
 
-userSchema.methods.generateAccessToken = function() {
+userSchema.methods.generateAccessToken = async function() {
     return (
         jwt.sign(
             {
                 _id: this._id,
                 name: this.name,
-                Location: this.location
+                location: this.location
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
@@ -92,13 +112,13 @@ userSchema.methods.generateAccessToken = function() {
     )
 }
 
-userSchema.methods.generateRefreshToken = function() {
+userSchema.methods.generateRefreshToken = async function() {
     return (
         jwt.sign(
             {
                 _id: this._id,
-                name: this._name,
-                location: this._location
+                name: this.name,
+                location: this.location
             },
             process.env.REFRESH_TOKEN_SECRET,
             {
@@ -106,6 +126,16 @@ userSchema.methods.generateRefreshToken = function() {
             }
         )
     )
+}
+
+userSchema.methods.createResetPasswordToken = async function() {
+    const resetToken = crypto.randomBytes(32).toString('hex')
+
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+
+    this.passwordResetTokenExpiry = Date.now() + 10 * 60 * 1000
+
+    return resetToken
 }
 
 export const User = mongoose.model("User", userSchema)

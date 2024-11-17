@@ -2,7 +2,6 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 import { User } from "../model/user.model.js";
-import { apiError } from "../util/apiError.js";
 import { generateAccessRefreshToken } from "../controller/user.controller.js";
 
 dotenv.config({ path: "./.env" });
@@ -42,12 +41,12 @@ passport.use(
     )
 );
 
-passport.serializeUser((user, done) => {
-    done(null, user);
+passport.serializeUser((userId, done) => {
+    done(null, userId);
 });
 
-passport.deserializeUser((user, done) => {
-    done(null, user);
+passport.deserializeUser((userId, done) => {
+    done(null, userId);
 });
 
 export default passport;
