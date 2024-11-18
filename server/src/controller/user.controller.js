@@ -258,7 +258,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
     const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/user/reset-password/${resetToken}`;
     const message = `We have received a password reset request. Please use the below link to reset the password.\n\n${resetUrl}\n\nThis reset password link is valid only for 10 minutes.`
-
+     
     try {
         await sendEmail({
             email: user.email,
