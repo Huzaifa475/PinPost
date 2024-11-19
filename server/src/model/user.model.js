@@ -61,14 +61,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    post: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Post"
-    }],
-    review: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review"
-    }],
     refreshToken: {
         type: String,
         default: null

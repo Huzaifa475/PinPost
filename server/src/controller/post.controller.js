@@ -35,6 +35,10 @@ const createPost = asyncHandler(async (req, res) => {
         createdBy: req.user?._id
     })
 
+    if(!post){
+        throw new apiError(500, "Server error, while creating the post")
+    }
+
     return res
         .status(200)
         .json(new apiResponse(200, post, "Post created successfully"))
@@ -45,7 +49,7 @@ const deletePost = asyncHandler(async (req, res) => {
 
     const postId = req.params
 
-    const post = await Post.findById({postId})
+    const post = await Post.findById(postId)
 
     if(!post){
         throw new apiError(403, "Post does not exists")
@@ -95,7 +99,7 @@ const updatePost = asyncHandler(async (req, res) => {
 //search all post of a user
 const searchAllPostOfUer = asyncHandler(async (req, res) => {
 
-    const {page, limit} = req.query
+    const {page = 1, limit = 10} = req.query
     const posts = await Post.find({createdBy: req.user?._id}).sort("-createdAt").skip((page-1) * limit).limit(Number(limit))
 
     return res
@@ -107,7 +111,7 @@ const searchAllPostOfUer = asyncHandler(async (req, res) => {
 const searchAllPostBasedOnLocation = asyncHandler(async (req, res) => {
 
     const {location, category} = req.body
-    const {page, limit} = req.query
+    const {page = 1, limit = 10} = req.query
 
     if(!location){
         throw new apiError(403, "Location is required")
