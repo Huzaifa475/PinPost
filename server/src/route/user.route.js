@@ -28,7 +28,7 @@ router.route('/forgot-password').post(forgotPassword);
 router.route('/reset-password/:token').patch(resetPassword);
 
 router.get('/google', passport.authenticate('google', {
-    scope: ['profile'],
+    scope: ['profile', 'email'],
     prompt: 'consent'
 }));
 

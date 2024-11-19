@@ -11,7 +11,19 @@ const postSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: [],
+        enum: [
+            'Restaurants',
+            'Cafes',
+            'Sports Venues',
+            'Parks',
+            'Movie Theaters',
+            'Malls',
+            'Museums',
+            'Beaches',
+            'Libraries',
+            'Festivals',
+            'Other'
+        ],
         required: true
     },
     location: {
@@ -32,7 +44,7 @@ const postSchema = new mongoose.Schema({
     },
     photo: {
         type: String,
-        default: null
+        default: undefined
     },
     review: [{
         type: mongoose.Schema.Types.ObjectId,

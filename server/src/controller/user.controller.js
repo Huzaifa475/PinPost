@@ -158,7 +158,9 @@ const updateUserInformation = asyncHandler(async(req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
         req.user?._id,
         {
-            ...updateFields
+            $set: {
+                ...updateFields
+            }
         },
         {
             new: true

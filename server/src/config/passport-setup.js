@@ -21,13 +21,15 @@ passport.use(
 
                     const googleUser = {
                         id: profile.id,
-                        displayName: profile.name.givenName || profile.displayName
+                        displayName: profile.name.givenName || profile.displayName,
+                        email: profile.emails[0].value
                     };
     
                     user = await User.create({
                         name: googleUser.displayName,
                         isGoogleUser: true,
                         googleId: googleUser.id,
+                        email: googleUser.email
                     })
                 }
 
