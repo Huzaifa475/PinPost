@@ -45,11 +45,7 @@ const postSchema = new mongoose.Schema({
     photo: {
         type: String,
         default: undefined
-    },
-    review: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review"
-    }]
+    }
 }, {timestamps: true})
 
 export const Post = mongoose.model("Post", postSchema)

@@ -1,3 +1,4 @@
+import { isValidObjectId } from 'mongoose';
 import { Post } from '../model/post.model.js';
 import { apiError } from '../util/apiError.js';
 import { apiResponse } from '../util/apiResponse.js';
@@ -11,7 +12,7 @@ const createPost = asyncHandler(async (req, res) => {
     const photoPath = req.file?.path
     let photo
 
-    if(!title || !description || !category || !location || !location.coordinates){
+    if(!title || !description || !category || !location){
         throw new apiError(403, "Important fields are required")
     }
 
@@ -27,10 +28,7 @@ const createPost = asyncHandler(async (req, res) => {
         title,
         description,
         category,
-        location: {
-            type: 'Point',
-            coordinates
-        },
+        location: location,
         photo,
         createdBy: req.user?._id
     })
@@ -47,7 +45,11 @@ const createPost = asyncHandler(async (req, res) => {
 //delete a post
 const deletePost = asyncHandler(async (req, res) => {
 
-    const postId = req.params
+    const {postId} = req.params
+
+    if(!isValidObjectId(postId)){
+        throw new apiError(403, "Post does not exists")
+    }
 
     const post = await Post.findById(postId)
 
@@ -55,11 +57,12 @@ const deletePost = asyncHandler(async (req, res) => {
         throw new apiError(403, "Post does not exists")
     }
 
-    if(post.createdBy !== req.user?._id){
+    if(post.createdBy.equals(req.user?._id)){
+        await Post.findByIdAndDelete(postId)
+    }
+    else{
         throw new apiError(403, "Invalid request")
     }
-
-    await Post.findByIdAndDelete({postId});
 
     return res
         .status(200)
@@ -71,6 +74,10 @@ const updatePost = asyncHandler(async (req, res) => {
 
     const {title, description, category, location} = req.body
     const {postId} = req.params
+
+    if(!isValidObjectId(postId)){
+        throw new apiError(403, "Post does not exists")
+    }
 
     const updateFields = {}
 
@@ -117,10 +124,10 @@ const searchAllPostBasedOnLocation = asyncHandler(async (req, res) => {
         throw new apiError(403, "Location is required")
     }
 
-    const query = { location };
+    const query = {location};
     if (category) query.category = category;
 
-    const posts = await Post.find({query}).sort("-createdAt").skip((page - 1) * limit).limit(Number(limit))
+    const posts = await Post.find({...query}).sort("-createdAt").skip((page - 1) * limit).limit(Number(limit))
 
     return res
         .status(200)

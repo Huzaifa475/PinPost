@@ -30,7 +30,11 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 import userRouter from "./route/user.route.js";
+import postRouter from "./route/post.route.js";
+import reviewRouter from "./route/review.route.js";
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/post", postRouter);
+app.use("/api/v1/review", reviewRouter);
 
 export {app}
