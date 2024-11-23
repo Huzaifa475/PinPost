@@ -258,7 +258,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
     await user.save({validateBeforeSave: false})
 
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/user/reset-password/${resetToken}`;
+    const resetUrl = `${req.protocol}://localhost:5173/reset-password/${resetToken}`;
     const message = `We have received a password reset request. Please use the below link to reset the password.\n\n${resetUrl}\n\nThis reset password link is valid only for 10 minutes.`
      
     try {
@@ -279,6 +279,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
 
+    const {password, confirmPassword} = req.body
+
+    if(!password || !confirmPassword){
+        throw new apiError(403, "All fields are required")
+    }
+    
     const passwordResetToken = crypto.createHash('sha256').update(req.params.token).digest('hex')
 
     const user = await User.findOne({passwordResetToken, passwordResetTokenExpiry: {$gt: Date.now()}}).select("-password -refreshToken")
@@ -291,7 +297,7 @@ const resetPassword = asyncHandler(async (req, res) => {
         throw new apiError(402, "Please enter the correct password")
     }
 
-    user.password = req.body.password
+    user.password = password
     user.passwordResetToken = undefined
     user.passwordResetTokenExpiry = undefined
     user.passwordChangedAt = Date.now()

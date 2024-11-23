@@ -7,7 +7,7 @@ import session from "express-session";
 const app = express();
 
 app.use(cors({
-    origin: process.env.ORIGIN || "*",
+    origin: "http://localhost:5173",
     credentials: true
 }))
 
@@ -36,5 +36,15 @@ import reviewRouter from "./route/review.route.js";
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/review", reviewRouter);
+
+app.use((err, req, res, next) => {
+    const statusCode = err.status || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || 'Internal Server Error',
+      statusCode: statusCode
+    });
+    next()
+});
 
 export {app}

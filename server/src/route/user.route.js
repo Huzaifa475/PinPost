@@ -43,14 +43,12 @@ router.get(
                 httpOnly: true,
                 secure: true
             }
-    
-            return res
-                .status(200)
-                .cookie("accessToken", tokens.accessToken, options)
-                .cookie("refreshToken", tokens.refreshToken, options)
-                .json(new apiResponse(200, {login: user, tokens}, "User loggedIn successfully"))
+
+            res.cookie("accessToken", tokens.accessToken, options)
+            res.cookie("refreshToken", tokens.refreshToken, options)
+            res.redirect(`http://localhost:5173/home?login=${user.name}`)
         } catch (error) {
-            console.log("Error occured while logging the user", error);
+            res.redirect("http://localhost:5173")
         }
     }
 );
