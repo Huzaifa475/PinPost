@@ -38,15 +38,30 @@ function Home() {
           view === 'search' && (
             <div className="right-main-container">
               <div className="search-bar">
-                <input type="text" placeholder='Enter the location'/>
-                <button>Submit</button>
+                <input type="text" placeholder='Enter the location' />
+                <button>Search</button>
+              </div>
+              <div className="category-container">
+                <select name="" id="">
+                  <option value="Restaurants">Restaurants</option>
+                  <option value="Cafes">Cafes</option>
+                  <option value="Sports Venues">Sports Venues</option>
+                  <option value="Parks">Parks</option>
+                  <option value="Movie Theaters">Movie Theaters</option>
+                  <option value="Malls">Malls</option>
+                  <option value="Museums">Museums</option>
+                  <option value="Beaches">Beaches</option>
+                  <option value="Libraries">Libraries</option>
+                  <option value="Festivals">Festivals</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
               <div className="posts-container">
-                <div className="post-container" onClick={handlePost}>
+                <div className="container-post" onClick={handlePost}>
                   <h1>Title</h1>
                   <h1>Description</h1>
                 </div>
-                <div className="post-container">
+                <div className="container-post">
                   <h1>Title</h1>
                   <h1>Description</h1>
                 </div>
@@ -61,15 +76,17 @@ function Home() {
           view === 'review' && (
             <div className="right-main-container">
               <div className="back-button" onClick={handlePostBack}>
-                <FontAwesomeIcon icon={faArrowLeft}/>
+                <FontAwesomeIcon icon={faArrowLeft} />
               </div>
               <div className="post-container">
                 <h1>Title</h1>
                 <h1>Description</h1>
               </div>
-              <div className="review-container">
-                <h1>Title</h1>
-                <h1>Description</h1>
+              <div className="reviews-container">
+                <div className="review-container">
+                  <h1>Title</h1>
+                  <h1>Description</h1>
+                </div>
               </div>
             </div>
           )

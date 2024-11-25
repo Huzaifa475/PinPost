@@ -11,8 +11,7 @@ function Profile() {
 
                 <div className="profile-top-container">
                     <div className="profile-top-left-container">
-                        <img src="" alt="" />
-                        <p>yes</p>
+                        <img src="https://www.shutterstock.com/image-photo/calm-weather-on-sea-ocean-600nw-2212935531.jpg" alt="" />
                     </div>
                     <div className="profile-top-right-container">
                         <p>Name: </p>
@@ -23,19 +22,52 @@ function Profile() {
 
 
                 <div className="profile-sliding-bar">
-                    <div className="profile-update-container">
+                    <div className={`profile-update-container ${view === 'update' ? 'active' : ''}`} onClick={() => setView('update')}>
                         <p>Update User Information</p>
                     </div>
-                    <div className="profile-create-post-container">
+                    <div className={`profile-create-post-container ${view === 'createPost' ? 'active' : ''}`} onClick={() => setView('createPost')}>
                         <p>Create Post</p>
                     </div>
-                    <div className="profile-post-view-container">
+                    <div className={`profile-post-view-container ${view === 'post' ? 'active' : ''}`} onClick={() => setView('post')}>
                         <p>User Posts</p>
                     </div>
-                    <div className="profile-review-view-container">
+                    <div className={`profile-review-view-container ${view === 'review' ? 'active' : ''}`} onClick={() => setView('review')}>
                         <p>User Reviews</p>
                     </div>
                 </div>
+
+
+                {
+                    view === 'update' && (
+                        <div className="profile-update-containers">
+                            <div className="profile-update-left-container">
+                                <div className="update-name-container containers">
+                                    <label htmlFor="">Name</label>
+                                    <input type="text" />
+                                </div>
+                                <div className="update-email-container containers">
+                                    <label htmlFor="">Email</label>
+                                    <input type="text" />
+                                </div>
+                                <div className="update-address-container containers">
+                                    <label htmlFor="">Address</label>
+                                    <input type="text" />
+                                </div>
+                                <div className="update-button containers">
+                                    <button>Update</button>
+                                </div>
+                            </div>
+                            <div className="profile-update-right-container">
+                                <h1>Upload Profile Image Here</h1>
+                                <form action="">
+                                    <input type="file" accept="image/*" required/>
+                                    <br /><br />
+                                    <button>Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    )
+                }
 
 
                 {
@@ -77,7 +109,28 @@ function Profile() {
 
 
                 {
-                    ``
+                    view === 'post' && (
+                        <div className="posts-display-container">
+                            <div className="post-display-container">
+                                <h1>Title</h1>
+                                <h1>Description</h1>
+                                <h1>Category</h1>
+                                <h1>Location</h1>
+                            </div>
+                        </div>
+                    )
+                }
+
+
+                {
+                    view === 'review' && (
+                        <div className="reviews-display-container">
+                            <div className="review-display-container">
+                                <h1>Title</h1>
+                                <h1>Description</h1>
+                            </div>
+                        </div>
+                    )
                 }
 
             </div>

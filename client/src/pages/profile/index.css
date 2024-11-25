@@ -32,6 +32,7 @@ html body{
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--text-color);
 }
 
 .profile-main-container{
@@ -40,18 +41,27 @@ html body{
     box-shadow: 4px 4px 4px black;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.3rem;
 }
 
 .profile-top-container{
-    height: 20%;
+    height: 25%;
     width: 100%;
     display: flex;
+    gap: 1rem;
 }
 
 .profile-top-left-container{
     height: 100%;
     width: 20%;
+    overflow: hidden;
+}
+
+.profile-top-left-container img{
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: fill;
+    display: block;
 }
 
 .profile-top-right-container{
@@ -60,33 +70,138 @@ html body{
     padding: 0.5rem;
     display: flex;
     flex-direction: column;
-    background-color: var(--accent-color);
+    gap: 0.3rem;
 }
 
 .profile-sliding-bar{
     height: 5%;
-    width: 100%;
+    width: 98%;
     padding-inline: 0.5rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    align-self: center;
     border: 1px solid black;
     border-radius: 0.5rem;
+    background-color: var(--muted-color);
 }
 
 .profile-sliding-bar p{
     cursor: pointer;
 }
 
+.profile-update-container:hover{
+    font-weight: 600;
+}
+
+.profile-create-post-container:hover{
+    font-weight: 600;
+}
+
+.profile-post-view-container:hover{
+    font-weight: 600;
+}
+
+.profile-review-view-container:hover{
+    font-weight: 600;
+}
+
+.active{
+    color: white !important;
+}
+
+.profile-update-containers{
+    height: 70%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.profile-update-left-container{
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.containers{
+    height: 25%;
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.containers label{
+    font-size: larger;
+    font-weight: 600;
+}
+
+.containers input{
+    height: 80%;
+    padding: 0.3rem;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    outline: none;
+}
+
+.containers button{
+    height: 80%;
+    font-size: larger;
+    font-weight: 600;
+    color: white;
+    background-color: var(--success-color);
+    border: 1px solid black;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.containers button:hover{
+    background-color: #00b451;
+}
+
+.profile-update-right-container{
+    height: 100%;
+    width: 50%;
+    border-left: 1px solid black;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.profile-update-right-container h1{
+    font-size: large;
+}
+
+.profile-update-right-container form{
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-update-right-container button{
+    height: 60%;
+    width: 30%;
+    background-color: var(--success-color);
+    border: 1px solid black;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.profile-update-right-container button:hover{
+    background-color: #00b451;
+}
+
 .profile-post-container{
-    height: 75%;
+    height: 70%;
     width: 100%;
     padding: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    background-color: #28c76f;
 }
 
 .profile-container-post{
@@ -104,7 +219,7 @@ html body{
 }
 
 .profile-container-post select{
-    height: 50%;
+    height: 70%;
     width: 100%;
     border: 1px solid black;
     outline: none;
@@ -117,14 +232,79 @@ html body{
 }
 
 .profile-post-button button{
-    height: 50%;
+    height: 70%;
     width: 20%;
     border: 1px solid black;
     border-radius: 1rem;
     outline: none;
     cursor: pointer;
+    background-color: #28c76f;
 }
 
 .profile-post-button button:hover{
-    background-color: #28c76f;
+    background-color: #00b451;
+}
+
+.posts-display-container{
+    height: 68%;
+    width: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.post-display-container{
+    height: auto;
+    width: 100%;
+    padding: 0.2rem;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.post-display-container h1{
+    font-size: large;
+}
+
+.post-display-container:nth-child(even){
+    background-color: rgb(219, 219, 254);
+}
+
+.post-display-container:nth-child(odd){
+    background-color: rgb(169, 169, 255);
+}
+
+.reviews-display-container{
+    height: 68%;
+    width: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.review-display-container{
+    height: auto;
+    width: 100%;
+    padding: 0.2rem;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.review-display-container h1{
+    font-size: large;
+}
+
+.review-display-container:nth-child(even){
+    background-color: #8affe8;
+}
+
+.review-display-container:nth-child(odd){
+    background-color: #00ffcc;
 }
