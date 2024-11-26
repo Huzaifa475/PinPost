@@ -73,6 +73,20 @@ html body{
     gap: 0.3rem;
 }
 
+.profile-top-container button{
+    height: 20%;
+    width: 30%;
+    padding-block: 0.2rem;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    background-color: #28c76f;
+    cursor: pointer;
+}
+
+.profile-top-container button:hover{
+    background-color: #00b451;
+}
+
 .profile-sliding-bar{
     height: 5%;
     width: 98%;
@@ -277,6 +291,80 @@ html body{
     background-color: rgb(169, 169, 255);
 }
 
+.post-update-delete-container{
+    padding: 0.2rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.2rem;
+}
+
+.post-update-delete-container button{
+    padding: 0.2rem;
+}
+
+.post-display-dropdown{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.post-display-dropdown input{
+    height: 1.5rem;
+    width: 80%;
+    padding: 0.2rem;
+    border: 1px solid black;
+    outline: none;
+}
+
+.post-display-dropdown select{
+    height: 1.5rem;
+    width: 80%;
+    border: 1px solid black;
+    outline: none;
+}
+
+.post-display-dropdown button{
+    padding-inline: 0.3rem;
+}
+
+.review-update-delete-container{
+    padding: 0.2rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.2rem;
+}
+
+.review-update-delete-container button{
+    padding: 0.2rem;
+}
+
+.review-display-dropdown{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.review-display-dropdown input{
+    height: 1.5rem;
+    width: 80%;
+    padding: 0.2rem;
+    border: 1px solid black;
+    outline: none;
+}
+
+.review-display-dropdown select{
+    height: 1.5rem;
+    width: 80%;
+    border: 1px solid black;
+    outline: none;
+}
+
+.review-display-dropdown button{
+    padding-inline: 0.3rem;
+}
+
 .reviews-display-container{
     height: 68%;
     width: 100%;
@@ -307,4 +395,16 @@ html body{
 
 .review-display-container:nth-child(odd){
     background-color: #00ffcc;
+}
+
+@media screen and (max-width: 500px) {
+    .profile-top-container{
+        height: 20%;
+    }
+    .profile-sliding-bar{
+        height: 10%;
+    }
+    .profile-update-right-container button{
+        width: 50%;
+    }
 }

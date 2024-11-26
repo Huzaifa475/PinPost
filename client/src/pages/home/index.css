@@ -69,7 +69,7 @@ html body{
 
 .search-bar input{
     height: 100%;
-    width: 89%;
+    width: 80%;
     padding: 0.3rem;
     border: 1px solid black;
     border-radius: 1rem;
@@ -78,8 +78,9 @@ html body{
 
 .search-bar button{
     height: 100%;
-    width: 10%;
-    color: white;
+    width: 19%;
+    font-size: 0.7rem;
+    color: var(--text-color);
     background-color: var(--muted-color);
     border: 1px solid black;
     border-radius: 1rem;
@@ -143,8 +144,8 @@ html body{
 
 .profile-button button{
     height: 100%;
-    width: 30%;
-    color: white;
+    width: 35%;
+    color: var(--text-color);
     background-color: var(--muted-color);
     border: 1px solid black;
     border-radius: 0.2rem;
@@ -209,4 +210,34 @@ html body{
 .post-container h1{
     font-size: larger;
     font-weight: 600;
+}
+
+@media screen and (max-width: 500px) {
+    .search-bar input{
+        width: 75%;
+    }
+    .search-bar button{
+        width: 24%;
+    }
+    .back-button{
+        width: 30% !important;
+    }
+    .post-container h1{
+        font-size: medium;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .search-bar input{
+        width: 70%;
+    }
+    .search-bar button{
+        width: 29%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .back-button{
+        width: 10%;
+    }
 }

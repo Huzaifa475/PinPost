@@ -24,6 +24,8 @@ function Signin() {
                     password
                 }
             })
+            const accessToken = res.data.data.accessToken
+            localStorage.setItem('accessToken', accessToken);
             toast.success(res.data.message)
             setTimeout(() => {
                 navigate('/home', {replace: true})

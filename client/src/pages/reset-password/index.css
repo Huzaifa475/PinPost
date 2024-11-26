@@ -96,3 +96,15 @@ html body{
 .reset-password-container-button button:hover{
     background-color: #ff2200;
 }
+
+@media screen and (max-width: 520px) {
+    .main-reset-password-container{
+        width: 60%;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .main-reset-password-container{
+        width: 80%;
+    }
+}
