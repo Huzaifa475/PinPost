@@ -5,7 +5,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import './index.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
-import { fetchPost, setPost } from '../../redux/post.js'
+import { fetchPost, createPost } from '../../redux/post.js'
 
 function Profile() {
 
@@ -22,7 +22,7 @@ function Profile() {
     const [showReviewDropdown, setShowReviewDropdown] = useState(false)
 
     const { profile, loading, error } = useSelector(state => state.profile)
-    const { posts } = useSelector(state => state.post)
+    const { post } = useSelector(state => state.post)
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const accessToken = localStorage.getItem('accessToken')
@@ -31,6 +31,9 @@ function Profile() {
         dispatch(fetchProfile())
         dispatch(fetchPost())
     }, [])
+
+    console.log(post);
+    
 
     const handleSignIn = () => {
         navigate('/', { replace: true })
@@ -238,14 +241,14 @@ function Profile() {
 
                 {
                     view === 'post' && (
-                        posts && posts.length > 0 ? (
-                            posts.map((post) => (
-                                <div className="posts-display-container">
+                        post && post.length > 0 ? (
+                            post.map((post) => (
+                                <div className="posts-display-container" key={post._id}>
                                     <div className="post-display-container">
                                         <h1>{post.title}</h1>
                                         <h1>{post.description}</h1>
                                         <h1>{post.category}</h1>
-                                        <h1>{post.location}</h1>
+                                        <h1>{post.location.coordinates}</h1>
                                         <div className="post-update-delete-container">
                                             <button onClick={() => setShowPostDropdown(prev => !prev)}>Update</button>
                                             <button>Delete</button>

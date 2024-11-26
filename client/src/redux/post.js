@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import toast from "react-hot-toast";
+import dotenv from "dotenv";
 
 axios.defaults.withCredentials = true
 export const fetchPost = () => async(dispatch) => {
@@ -25,6 +26,20 @@ export const createPost = ({postTitle, postDescription, postCategory, postAddres
     const accessToken = localStorage.getItem('accessToken')
     try {
         dispatch(setLoading())
+        const response = await axios({
+            method: 'get',
+            url: '/api/v1/geocode',
+            params: {
+                address: postAddress
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+
+        const {lat, lng} = response.data.data.results[0].geometry;
+        
         const res = await axios({
             method: 'post',
             url: '/api/v1/post/create',
@@ -32,7 +47,10 @@ export const createPost = ({postTitle, postDescription, postCategory, postAddres
                 title: postTitle,
                 description: postDescription,
                 category: postCategory,
-                address: postAddress
+                location: {
+                    type: 'Point',
+                    coordinates: [lat, lng]
+                }
             },
             headers: {
                 'Content-Type': 'application/json',

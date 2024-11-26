@@ -3,6 +3,12 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import passport from "./config/passport-setup.js";
 import session from "express-session";
+import axios from 'axios';
+import dotenv from "dotenv";
+
+dotenv.config({
+    path: './.env'
+})
 
 const app = express();
 
@@ -32,6 +38,8 @@ app.use(passport.session())
 import userRouter from "./route/user.route.js";
 import postRouter from "./route/post.route.js";
 import reviewRouter from "./route/review.route.js";
+import { asyncHandler } from "./util/asyncHandler.js";
+import { apiResponse } from "./util/apiResponse.js";
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
@@ -46,5 +54,18 @@ app.use((err, req, res, next) => {
     });
     next()
 });
+
+app.get('/api/v1/geocode', asyncHandler(async(req, res) => {
+    const {address} = req.query
+    const apiKey = process.env.OPENCAGE_API_KEY
+
+    const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json`, {
+        params: {q: address, key: apiKey}
+    })
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, response.data, "Geocoding done successfully"))
+}))
 
 export {app}
