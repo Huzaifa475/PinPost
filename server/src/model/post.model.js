@@ -26,6 +26,10 @@ const postSchema = new mongoose.Schema({
         ],
         required: true
     },
+    address: {
+        type: String,
+        required: true
+    },
     location: {
         type: {
             type: String,

@@ -31,8 +31,8 @@ html body{
   
 
 .leaflet-container{
-    height: 100vh;
-    width: 60vw;
+    height: 100%;
+    width: 100%;
 }
 
 .home-main-container{
@@ -42,9 +42,15 @@ html body{
     color: var(--text-color);
 }
 
+.home-main-container h1{
+    font-size: large !important;
+    font-weight: 400 !important;
+}
+
 .home-left-container{
     height: 100%;
     width: 60%;
+    position: relative;
 }
 
 .home-right-container{
@@ -161,7 +167,7 @@ html body{
 }
 
 .back-button{
-    height: 3%;
+    height: 4%;
     width: 5%;
     display: flex;
     justify-content: center;
@@ -171,8 +177,24 @@ html body{
     border-radius: 0.3rem;
 }
 
+.post-container{
+    height: 16%;
+    width: 100%;
+    padding: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-radius: 0.2rem;
+    background-color: rgb(169, 169, 255);
+}
+
+.post-container h1{
+    font-size: larger;
+    font-weight: 600;
+}
+
 .reviews-container{
-    height: auto;
+    height: 65%;
     width: 100%;
     overflow-y: scroll;
     display: flex;
@@ -196,20 +218,47 @@ html body{
     font-weight: 500;
 }
 
-.post-container{
-    height: auto;
+.review-create-container{
+    height: 15%;
     width: 100%;
-    padding: 0.2rem;
     display: flex;
     flex-direction: column;
-    border: 1px solid black;
-    border-radius: 0.2rem;
-    background-color: rgb(169, 169, 255);
 }
 
-.post-container h1{
-    font-size: larger;
-    font-weight: 600;
+.review-create-input{
+    width: 100%;
+    display: flex;
+}
+
+.review-create-inputs{
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-create-inputs input{
+    padding-left: 0.1rem;
+    border: 1px solid black;
+    outline: none;
+}
+
+.review-create-button{
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.review-create-button button{
+    height: 50%;
+    width: 80%;
+    border: 1px solid black;
+    background-color: #55ffa1;
+    cursor: pointer;
+}
+
+.review-create-button button:hover{
+    background-color: #28c76f;
 }
 
 @media screen and (max-width: 500px) {
@@ -224,6 +273,9 @@ html body{
     }
     .post-container h1{
         font-size: medium;
+    }
+    .review-create-button button{
+        width: 96%;
     }
 }
 

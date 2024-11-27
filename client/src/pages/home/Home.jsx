@@ -1,26 +1,57 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import './index.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faBackward } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchPostBasedOnLocation } from '../../redux/post'
+import { createReview, fetchPostReview, resetReview } from '../../redux/review'
+import axios from 'axios'
 
 function Home() {
   const [view, setView] = useState('search')
   const [location, setLocation] = useState([28.5, 77])
+
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('')
+  const [selectedPost, setSelectedPost] = useState(null)
+  const [title, setTitle] = useState('')
+  const [rating, setRating] = useState('')
+  const { searchPost } = useSelector(state => state.post)
+  const { searchReview } = useSelector(state => state.review)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const handlePost = () => {
+  const handlePost = (post) => {
+    dispatch(fetchPostReview(post._id))
+    setSelectedPost(post)
     setView('review')
   }
 
   const handlePostBack = () => {
+    dispatch(resetReview())
+    setSelectedPost(null)
     setView('search')
   }
 
   const handleProfile = () => {
     navigate('/profile')
+  }
+
+  const handleSearch = async() => {
+    dispatch(fetchPostBasedOnLocation({ address: search, category }))
+
+    setSearch('')
+    setCategory('')
+  }
+
+  const handleCreateReview = (postId) => {
+    dispatch(createReview({ title, rating }, postId))
+
+    setTitle('')
+    setRating('')
   }
 
   return (
@@ -38,11 +69,11 @@ function Home() {
           view === 'search' && (
             <div className="right-main-container">
               <div className="search-bar">
-                <input type="text" placeholder='Enter the location' />
-                <button>Search</button>
+                <input type="text" placeholder='Enter the location' value={search} onChange={(e) => setSearch(e.target.value)} />
+                <button onClick={handleSearch}>Search</button>
               </div>
               <div className="category-container">
-                <select name="" id="">
+                <select name="" id="" value={category} onChange={(e) => setCategory(e.target.value)}>
                   <option value="Restaurants">Restaurants</option>
                   <option value="Cafes">Cafes</option>
                   <option value="Sports Venues">Sports Venues</option>
@@ -57,14 +88,20 @@ function Home() {
                 </select>
               </div>
               <div className="posts-container">
-                <div className="container-post" onClick={handlePost}>
-                  <h1>Title</h1>
-                  <h1>Description</h1>
-                </div>
-                <div className="container-post">
-                  <h1>Title</h1>
-                  <h1>Description</h1>
-                </div>
+
+                {
+                  searchPost && searchPost.length > 0 ?
+                    searchPost.map((post) => (
+                      <div className="container-post" key={post._id} onClick={() => handlePost(post)}>
+                        <h1>{post.title}</h1>
+                        <h1>{post.description}</h1>
+                        <h1>{post.category}</h1>
+                        <h1>{post.address}</h1>
+                      </div>
+                    ))
+                    :
+                    <div>No post to fetch</div>
+                }
               </div>
               <div className="profile-button">
                 <button onClick={handleProfile}>Profile</button>
@@ -78,15 +115,40 @@ function Home() {
               <div className="back-button" onClick={handlePostBack}>
                 <FontAwesomeIcon icon={faArrowLeft} />
               </div>
+              <div className="review-create-container">
+                <div className="review-create-title">
+                  <p>Your review</p>
+                </div>
+                <div className="review-create-input">
+                  <div className="review-create-inputs">
+                    <label htmlFor="">Title</label>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <label htmlFor="">Rating</label>
+                    <input type="text" value={rating} onChange={(e) => setRating(e.target.value)} />
+                  </div>
+                  <div className="review-create-button">
+                    <button onClick={() => handleCreateReview(selectedPost._id)}>Create</button>
+                  </div>
+                </div>
+              </div>
               <div className="post-container">
-                <h1>Title</h1>
-                <h1>Description</h1>
+                <h1>{selectedPost.title}</h1>
+                <h1>{selectedPost.description}</h1>
+                <h1>{selectedPost.category}</h1>
+                <h1>{selectedPost.address}</h1>
               </div>
               <div className="reviews-container">
-                <div className="review-container">
-                  <h1>Title</h1>
-                  <h1>Description</h1>
-                </div>
+                {
+                  searchReview && searchReview.length > 0 ?
+                    searchReview.map((review) => (
+                      <div className="review-container" key={review._id}>
+                        <h1>{review.title}</h1>
+                        <h1>{review.rating}</h1>
+                      </div>
+                    ))
+                    :
+                    <div>No Review</div>
+                }
               </div>
             </div>
           )

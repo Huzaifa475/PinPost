@@ -5,7 +5,8 @@ import toast, { Toaster } from 'react-hot-toast'
 import './index.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
-import { fetchPost, createPost } from '../../redux/post.js'
+import { fetchPost, createPost, deletePost, updatePost } from '../../redux/post.js'
+import { deleteReview, fetchReview, updateReview } from '../../redux/review.js'
 
 function Profile() {
 
@@ -18,22 +19,31 @@ function Profile() {
     const [postDescription, setPostDescription] = useState('')
     const [postAddress, setPostAddress] = useState('')
     const [postCategory, setPostCategory] = useState('Restaurants')
+
     const [showPostDropdown, setShowPostDropdown] = useState(false)
+    const [selectedPost, setSelectedPost] = useState(null)
+    const [updatePostTitle, setUpdatePostTitle] = useState('')
+    const [updatePostDescription, setUpdatePostDescription] = useState('')
+    const [updatePostAddress, setUpdatePostAddress] = useState('')
+    const [updatePostCategory, setUpdatePostCategory] = useState('Restaurants')
+
     const [showReviewDropdown, setShowReviewDropdown] = useState(false)
+    const [selectedReview, setSelectedReview] = useState(null)
+    const [updateReviewTitle, setUpdateReviewTitle] = useState('')
+    const [updateReviewRating, setUpdateReviewRating] = useState('')
+
 
     const { profile, loading, error } = useSelector(state => state.profile)
     const { post } = useSelector(state => state.post)
+    const { review } = useSelector(state => state.review)
+
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const accessToken = localStorage.getItem('accessToken')
 
     useEffect(() => {
         dispatch(fetchProfile())
-        dispatch(fetchPost())
     }, [])
-
-    console.log(post);
-    
 
     const handleSignIn = () => {
         navigate('/', { replace: true })
@@ -67,15 +77,6 @@ function Profile() {
                 toast.error(error.request?.statusText)
             }
         }
-    }
-
-    const handleCreatePost = () => {
-        dispatch(createPost({postTitle, postDescription, postCategory, postAddress}))
-
-        setPostTitle('')
-        setPostDescription('')
-        setPostCategory('')
-        setPostAddress('')
     }
 
     const handleUpdateInformation = () => {
@@ -125,6 +126,63 @@ function Profile() {
         }
     }
 
+    const handleCreatePost = () => {
+        dispatch(createPost({ postTitle, postDescription, postCategory, postAddress }))
+
+        setPostTitle('')
+        setPostDescription('')
+        setPostCategory('Restaurants')
+        setPostAddress('')
+    }
+
+    const handlePostView = () => {
+        dispatch(fetchPost())
+        setView('post')
+    }
+
+    const handleShowPostDropdown = (post) => {
+        if (selectedPost === post._id) {
+            setSelectedPost(null)
+            setShowPostDropdown(false)
+        }
+        else {
+            setSelectedPost(post._id)
+            setShowPostDropdown(true)
+        }
+    }
+
+    const handleUpdatePost = (postId) => {
+        dispatch(updatePost({ title: updatePostTitle, description: updatePostDescription, category: updatePostCategory, address: updatePostAddress }, postId))
+
+        setUpdatePostTitle('')
+        setUpdatePostDescription('')
+        setUpdatePostCategory('Restaurants')
+        setUpdatePostAddress('')
+    }
+
+    const handleReviewView = () => {
+        dispatch(fetchReview())
+        setView('review')
+    }
+
+    const handleShowReviewDropdown = (review) => {
+        if (selectedReview === review._id) {
+            setSelectedReview(null)
+            setShowReviewDropdown(false)
+        }
+        else {
+            setSelectedReview(review._id)
+            setShowReviewDropdown(true)
+        }
+    }
+
+    const handleUpdateReview = (reviewId) => {
+        dispatch(updateReview({ title: updateReviewTitle, rating: updateReviewRating }, reviewId))
+
+        setUpdateReviewTitle('')
+        setUpdateReviewRating('')
+    }
+
     return (
         <div className="profile-container">
             <div className="profile-main-container">
@@ -158,10 +216,10 @@ function Profile() {
                     <div className={`profile-create-post-container ${view === 'createPost' ? 'active' : ''}`} onClick={() => setView('createPost')}>
                         <p>Create Post</p>
                     </div>
-                    <div className={`profile-post-view-container ${view === 'post' ? 'active' : ''}`} onClick={() => setView('post')}>
+                    <div className={`profile-post-view-container ${view === 'post' ? 'active' : ''}`} onClick={handlePostView}>
                         <p>User Posts</p>
                     </div>
-                    <div className={`profile-review-view-container ${view === 'review' ? 'active' : ''}`} onClick={() => setView('review')}>
+                    <div className={`profile-review-view-container ${view === 'review' ? 'active' : ''}`} onClick={handleReviewView}>
                         <p>User Reviews</p>
                     </div>
                 </div>
@@ -194,6 +252,7 @@ function Profile() {
                                     <input type="file" accept="image/*" onChange={handleFileSelect} required />
                                     <br /><br />
                                     <button onClick={handleUploadImage}>Submit</button>
+                                    <Toaster/>
                                 </form>
                             </div>
                         </div>
@@ -206,15 +265,15 @@ function Profile() {
                         <div className="profile-post-container">
                             <div className="profile-container-post">
                                 <h1>Title</h1>
-                                <input type="text" value={postTitle} onChange={(e) => setPostTitle(e.target.value)} placeholder='Title'/>
+                                <input type="text" value={postTitle} onChange={(e) => setPostTitle(e.target.value)} placeholder='Title' />
                             </div>
                             <div className="profile-container-post">
                                 <h1>Description</h1>
-                                <input type="text" value={postDescription} onChange={(e) => setPostDescription(e.target.value)} placeholder='Description'/>
+                                <input type="text" value={postDescription} onChange={(e) => setPostDescription(e.target.value)} placeholder='Description' />
                             </div>
                             <div className="profile-container-post">
                                 <h1>Address</h1>
-                                <input type="text" value={postAddress} onChange={(e) => setPostAddress(e.target.value)} placeholder='Address'/>
+                                <input type="text" value={postAddress} onChange={(e) => setPostAddress(e.target.value)} placeholder='Address' />
                             </div>
                             <div className="profile-container-post">
                                 <select name="" id="" value={postCategory} onChange={(e) => setPostCategory(e.target.value)}>
@@ -233,6 +292,7 @@ function Profile() {
                             </div>
                             <div className="profile-post-button">
                                 <button onClick={handleCreatePost}>Create</button>
+                                <Toaster />
                             </div>
                         </div>
                     )
@@ -241,62 +301,66 @@ function Profile() {
 
                 {
                     view === 'post' && (
-                        post && post.length > 0 ? (
-                            post.map((post) => (
-                                <div className="posts-display-container" key={post._id}>
-                                    <div className="post-display-container">
-                                        <h1>{post.title}</h1>
-                                        <h1>{post.description}</h1>
-                                        <h1>{post.category}</h1>
-                                        <h1>{post.location.coordinates}</h1>
-                                        <div className="post-update-delete-container">
-                                            <button onClick={() => setShowPostDropdown(prev => !prev)}>Update</button>
-                                            <button>Delete</button>
+                        <div className="posts-display-container" >
+                            <Toaster/>
+                            {
+                                post && post.length > 0 ? (
+                                    post.map((post) => (
+                                        <div className="post-display-container" key={post._id}>
+                                            <h1>{post.title}</h1>
+                                            <h1>{post.description}</h1>
+                                            <h1>{post.category}</h1>
+                                            <h1>{post.address}</h1>
+                                            <div className="post-update-delete-container">
+                                                <button onClick={() => handleShowPostDropdown(post)}>Update</button>
+                                                <button onClick={() => dispatch(deletePost(post._id))}>Delete</button>
+                                            </div>
+                                            {
+                                                showPostDropdown && selectedPost === post._id && (
+                                                    <div className="post-display-dropdown">
+                                                        <div className="post-display-dropdown-title">
+                                                            <p>Title</p>
+                                                            <input type="text" value={updatePostTitle} onChange={(e) => setUpdatePostTitle(e.target.value)} placeholder='Title' />
+                                                        </div>
+                                                        <div className="post-display-dropdown-description">
+                                                            <p>Description</p>
+                                                            <input type="text" value={updatePostDescription} onChange={(e) => setUpdatePostDescription(e.target.value)} placeholder='Description' />
+                                                        </div>
+                                                        <div className="post-display-dropdown-address">
+                                                            <p>Address</p>
+                                                            <input type="text" value={updatePostAddress} onChange={(e) => setUpdatePostAddress(e.target.value)} placeholder='Address' />
+                                                        </div>
+                                                        <div className="post-display-dropdown-category">
+                                                            <select name="" id="" value={updatePostCategory} onChange={(e) => setUpdatePostCategory(e.target.value)}>
+                                                                <option value="Restaurants">Restaurants</option>
+                                                                <option value="Cafes">Cafes</option>
+                                                                <option value="Sports Venues">Sports Venues</option>
+                                                                <option value="Parks">Parks</option>
+                                                                <option value="Movie Theaters">Movie Theaters</option>
+                                                                <option value="Malls">Malls</option>
+                                                                <option value="Museums">Museums</option>
+                                                                <option value="Beaches">Beaches</option>
+                                                                <option value="Libraries">Libraries</option>
+                                                                <option value="Festivals">Festivals</option>
+                                                                <option value="Other">Other</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="post-display-dropdown-button">
+                                                            <button onClick={() => handleUpdatePost(post._id)}>Update</button>
+                                                            <Toaster />
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
                                         </div>
-                                        {
-                                            showPostDropdown === true && (
-                                                <div className="post-display-dropdown">
-                                                    <div className="post-display-dropdown-title">
-                                                        <p>Title</p>
-                                                        <input type="text" />
-                                                    </div>
-                                                    <div className="post-display-dropdown-description">
-                                                        <p>Description</p>
-                                                        <input type="text" />
-                                                    </div>
-                                                    <div className="post-display-dropdown-address">
-                                                        <p>Address</p>
-                                                        <input type="text" />
-                                                    </div>
-                                                    <div className="post-display-dropdown-category">
-                                                        <select name="" id="">
-                                                            <option value="Restaurants">Restaurants</option>
-                                                            <option value="Cafes">Cafes</option>
-                                                            <option value="Sports Venues">Sports Venues</option>
-                                                            <option value="Parks">Parks</option>
-                                                            <option value="Movie Theaters">Movie Theaters</option>
-                                                            <option value="Malls">Malls</option>
-                                                            <option value="Museums">Museums</option>
-                                                            <option value="Beaches">Beaches</option>
-                                                            <option value="Libraries">Libraries</option>
-                                                            <option value="Festivals">Festivals</option>
-                                                            <option value="Other">Other</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="post-display-dropdown-button">
-                                                        <button>Submit</button>
-                                                    </div>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-                                </div>
-                            ))
-                        )
-                        :
-                        (
-                            <div>No Post to fetch</div>
-                        )
+                                    ))
+                                )
+                                    :
+                                    (
+                                        <div>No Post to fetch</div>
+                                    )
+                            }
+                        </div>
                     )
                 }
 
@@ -304,31 +368,40 @@ function Profile() {
                 {
                     view === 'review' && (
                         <div className="reviews-display-container">
-                            <div className="review-display-container">
-                                <h1>Title</h1>
-                                <h1>Description</h1>
-                                <div className="review-update-delete-container">
-                                    <button onClick={() => setShowReviewDropdown(prev => !prev)}>Update</button>
-                                    <button>Delete</button>
-                                </div>
-                                {
-                                    showReviewDropdown === true && (
-                                        <div className="review-display-dropdown">
-                                            <div className="review-display-dropdown-title">
-                                                <p>Title</p>
-                                                <input type="text" />
+                            <Toaster/>
+                            {
+                                review && review.length > 0 ?
+                                    review.map((review) => (
+                                        <div className="review-display-container" key={review._id}>
+                                            <h1>Title: {review.title}</h1>
+                                            <h1>Rating: {review.rating}</h1>
+                                            <div className="review-update-delete-container">
+                                                <button onClick={() => handleShowReviewDropdown(review)}>Update</button>
+                                                <button onClick={() => dispatch(deleteReview(review._id))}>Delete</button>
                                             </div>
-                                            <div className="review-display-dropdown-rating">
-                                                <p>Rating(1 to 5): </p>
-                                                <input type="number" min={1} max={5} />
-                                            </div>
-                                            <div className="review-display-dropdown-button">
-                                                <button>Submit</button>
-                                            </div>
+                                            {
+                                                showReviewDropdown && selectedReview === review._id && (
+                                                    <div className="review-display-dropdown">
+                                                        <div className="review-display-dropdown-title">
+                                                            <p>Title</p>
+                                                            <input type="text" value={updateReviewTitle} onChange={(e) => setUpdateReviewTitle(e.target.value)} placeholder='Title'/>
+                                                        </div>
+                                                        <div className="review-display-dropdown-rating">
+                                                            <p>Rating(1 to 5): </p>
+                                                            <input type="number" min={1} max={5} value={updateReviewRating} onChange={(e) => setUpdateReviewRating(e.target.value)} placeholder='2'/>
+                                                        </div>
+                                                        <div className="review-display-dropdown-button">
+                                                            <button onClick={() => handleUpdateReview(review._id)}>Submit</button>
+                                                            <Toaster/>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
                                         </div>
-                                    )
-                                }
-                            </div>
+                                    ))
+                                    :
+                                    <div>No Review fetch</div>
+                            }
                         </div>
                     )
                 }

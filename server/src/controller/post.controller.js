@@ -8,11 +8,13 @@ import { uploadOnCloudinary } from '../util/uploadOnCloudinary.js';
 //create a post
 const createPost = asyncHandler(async (req, res) => {
 
-    const {title, description, category, location} = req.body;
+    const {title, description, category, location, address} = req.body;
     const photoPath = req.file?.path
     let photo
 
-    if(!title || !description || !category || !location){
+    console.log(title, description, category, location, address);
+    
+    if(!title || !description || !category || !location || !address){
         throw new apiError(403, "Important fields are required")
     }
 
@@ -28,7 +30,8 @@ const createPost = asyncHandler(async (req, res) => {
         title,
         description,
         category,
-        location: location,
+        location,
+        address,
         photo,
         createdBy: req.user?._id
     })
@@ -72,7 +75,7 @@ const deletePost = asyncHandler(async (req, res) => {
 //update a post
 const updatePost = asyncHandler(async (req, res) => {
 
-    const {title, description, category, location} = req.body
+    const {title, description, category, location, address} = req.body
     const {postId} = req.params
 
     if(!isValidObjectId(postId)){
@@ -85,6 +88,7 @@ const updatePost = asyncHandler(async (req, res) => {
     if(description) updateFields.description = description
     if(category) updateFields.category = category
     if(location) updateFields.location = location
+    if(address) updateFields.address = address
 
     const updatedPost = await Post.findByIdAndUpdate(
         postId,
@@ -117,14 +121,14 @@ const searchAllPostOfUer = asyncHandler(async (req, res) => {
 //search a post based on the location
 const searchAllPostBasedOnLocation = asyncHandler(async (req, res) => {
 
-    const {location, category} = req.body
+    const {address, category} = req.query
     const {page = 1, limit = 10} = req.query
-
-    if(!location){
-        throw new apiError(403, "Location is required")
+        
+    if(!address){
+        throw new apiError(403, "Address is required")
     }
 
-    const query = {location};
+    const query = {address};
     if (category) query.category = category;
 
     const posts = await Post.find({...query}).sort("-createdAt").skip((page - 1) * limit).limit(Number(limit))

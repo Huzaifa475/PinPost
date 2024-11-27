@@ -35,6 +35,11 @@ html body{
     color: var(--text-color);
 }
 
+.profile-container h1{
+    font-size: large !important;
+    font-weight: 500 !important;
+}
+
 .profile-main-container{
     width: 98%;
     height: 98%;
