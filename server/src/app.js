@@ -68,4 +68,20 @@ app.get('/api/v1/geocode', asyncHandler(async(req, res) => {
         .json(new apiResponse(200, response.data, "Geocoding done successfully"))
 }))
 
+app.get('/api/v1/whether', asyncHandler(async(req, res) => {
+    const {lat, lng} = req.query
+    const apiKey = process.env.WHETHER_API_KEY
+
+    const response = await axios.get('http://api.weatherstack.com/current', {
+        params: {
+            access_key: apiKey,
+            query: `${lat},${lng}`
+        }
+    })
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, response.data, "Whether information fetch successfully"))
+}))
+
 export {app}

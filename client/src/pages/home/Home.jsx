@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import './index.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,6 +9,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchPostBasedOnLocation } from '../../redux/post'
 import { createReview, fetchPostReview, resetReview } from '../../redux/review'
 import axios from 'axios'
+import toast, { Toaster } from 'react-hot-toast'
+
+const UpdateMapCenter = ({ newCenter }) => {
+  const map = useMap()
+  useEffect(() => {
+    map.flyTo(newCenter, map.getZoom())
+  }, [newCenter, map])
+
+  return null;
+}
 
 function Home() {
   const [view, setView] = useState('search')
@@ -19,10 +29,42 @@ function Home() {
   const [selectedPost, setSelectedPost] = useState(null)
   const [title, setTitle] = useState('')
   const [rating, setRating] = useState('')
-  const { searchPost } = useSelector(state => state.post)
-  const { searchReview } = useSelector(state => state.review)
+  const [toastId, setToastId] = useState(null)
+  const [whether, setWhether] = useState(null)
+  const { searchPost, loading: postLoading, error: postError } = useSelector(state => state.post)
+  const { searchReview, loading: reviewLoading, error:reviewError } = useSelector(state => state.review)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (location) {
+      setLocation(location)
+    }
+  }, [setLocation])
+
+  useEffect(() => {
+    if(postLoading){
+      const id = toast.loading('Loading, Wait for some time', {
+        duration: Infinity
+      })
+      setToastId(id)
+    }
+    else{
+      toast.dismiss(toastId)
+    }
+  }, [postLoading])
+
+  useEffect(() => {
+    if(reviewLoading){
+      const id = toast.loading('Loading, Wait for some time', {
+        duration: Infinity
+      })
+      setToastId(id)
+    }
+    else{
+      toast.dismiss(toastId)
+    }
+  }, [reviewLoading])
 
   const handlePost = (post) => {
     dispatch(fetchPostReview(post._id))
@@ -40,13 +82,61 @@ function Home() {
     navigate('/profile')
   }
 
-  const handleSearch = async() => {
+  const handleSearch = async () => {
     dispatch(fetchPostBasedOnLocation({ address: search, category }))
 
     setSearch('')
     setCategory('')
-  }
 
+    const accessToken = localStorage.getItem('accessToken')
+    const response = await axios({
+      method: 'get',
+      url: '/api/v1/geocode',
+      params: {
+        address: search
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+    let lat = null, lng = null
+    if (response.data?.data?.results[0]) {
+      lat = response.data?.data?.results[0]?.geometry?.lat;
+      lng = response.data?.data?.results[0]?.geometry?.lng;
+      setLocation([lat, lng])
+    }
+    else {
+      toast.error('Please write valid address')
+      return;
+    }
+
+    try {
+      const res = await axios({
+        method: 'get',
+        url: '/api/v1/whether',
+        params: {
+          lat,
+          lng
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      setWhether(res.data.data.current)
+      toast.success(`Temperature:${res.data.data.current.temperature} \n Whether:${res.data.data.current.weather_descriptions}`, {
+        icon: <img src={res.data.data.current.weather_icons[0]} alt="Weather Icon" style={{ width: '20px', height: '20px' }} />,
+        duration: 6000,
+        position: 'bottom-left'
+      })
+    } catch (error) {
+      toast.error("Failed to fetch weather information.", {
+        position: 'bottom-left'
+      });
+    }
+  }
+  
   const handleCreateReview = (postId) => {
     dispatch(createReview({ title, rating }, postId))
 
@@ -62,7 +152,22 @@ function Home() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <UpdateMapCenter newCenter={location} />
+          {
+            searchPost && searchPost.length > 0 ?
+              searchPost.map((post) => (
+                <Marker key={post._id} position={post.location.coordinates}>
+                  <Popup>
+                    <p>Temperature: {whether?.temperature}</p>
+                    <p>Whether Description: {whether?.weather_descriptions}</p>
+                  </Popup>
+                </Marker>
+              ))
+              :
+              null
+          }
         </MapContainer>
+        <Toaster/>
       </div>
       <div className="home-right-container">
         {

@@ -11,8 +11,6 @@ const createPost = asyncHandler(async (req, res) => {
     const {title, description, category, location, address} = req.body;
     const photoPath = req.file?.path
     let photo
-
-    console.log(title, description, category, location, address);
     
     if(!title || !description || !category || !location || !address){
         throw new apiError(403, "Important fields are required")

@@ -135,7 +135,7 @@ const reviewSlice = createSlice({
             state.error = action.payload
         },
         setSearchReview: (state, action) => {
-            state.searchReview = action.payload
+            state.searchReview = [...action.payload].reverse()
             state.loading = false,
             state.error = null
         },

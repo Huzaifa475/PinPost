@@ -25,9 +25,8 @@ export const fetchPost = () => async(dispatch) => {
 export const fetchPostBasedOnLocation = ({address, category}) => async(dispatch) => {
     const accessToken = localStorage.getItem('accessToken')
     try {
-        dispatch(setLoading())
-        console.log(address);
-        
+        dispatch(setLoading()) 
+        address = address.toLowerCase()
         const res = await axios({
             method: 'get',
             url: '/api/v1/post/search-location',
@@ -55,6 +54,7 @@ export const createPost = ({postTitle, postDescription, postCategory, postAddres
             toast.error('Please enter the address')
             return;
         }
+        postAddress = postAddress.toLowerCase()
         const response = await axios({
             method: 'get',
             url: '/api/v1/geocode',

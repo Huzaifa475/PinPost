@@ -32,10 +32,11 @@ function Profile() {
     const [updateReviewTitle, setUpdateReviewTitle] = useState('')
     const [updateReviewRating, setUpdateReviewRating] = useState('')
 
+    const [toastId, setToastId] = useState(null)
 
-    const { profile, loading, error } = useSelector(state => state.profile)
-    const { post } = useSelector(state => state.post)
-    const { review } = useSelector(state => state.review)
+    const { profile, loading: profileLoading, error: profileError } = useSelector(state => state.profile)
+    const { post, loading: postLoading, error: postError } = useSelector(state => state.post)
+    const { review, loading: reviewLoading, error: reviewError } = useSelector(state => state.review)
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -44,6 +45,42 @@ function Profile() {
     useEffect(() => {
         dispatch(fetchProfile())
     }, [])
+
+    useEffect(() => {
+        if(postLoading){
+            const id = toast.loading('Loading, Wait for some time', {
+                duration: Infinity
+            })
+            setToastId(id)
+        }
+        else{
+            toast.dismiss(toastId)
+        }
+    }, [postLoading])
+
+    useEffect(() => {
+        if(reviewLoading){
+            const id = toast.loading('Loading, Wait for some time', {
+                duration: Infinity
+            })
+            setToastId(id)
+        }
+        else{
+            toast.dismiss(toastId)
+        }
+    }, [reviewLoading])
+
+    useEffect(() => {
+        if(profileLoading){
+            const id = toast.loading('Loading, Wait for some time', {
+                duration: Infinity
+            })
+            setToastId(id)
+        }
+        else{
+            toast.dismiss(toastId)
+        }
+    }, [profileLoading])
 
     const handleSignIn = () => {
         navigate('/', { replace: true })
