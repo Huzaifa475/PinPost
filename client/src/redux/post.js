@@ -22,7 +22,7 @@ export const fetchPost = () => async(dispatch) => {
     }
 }
 
-export const fetchPostBasedOnLocation = ({address, category}) => async(dispatch) => {
+export const fetchPostBasedOnLocation = ({address, category}, nextPage) => async(dispatch) => {
     const accessToken = localStorage.getItem('accessToken')
     try {
         dispatch(setLoading()) 
@@ -32,7 +32,8 @@ export const fetchPostBasedOnLocation = ({address, category}) => async(dispatch)
             url: '/api/v1/post/search-location',
             params: {
                 address,
-                category
+                category,
+                page: nextPage
             },
             headers: {
                 'Content-Type': 'application/json',
@@ -40,6 +41,9 @@ export const fetchPostBasedOnLocation = ({address, category}) => async(dispatch)
             }
         })
         dispatch(setSearchPost(res.data.data))
+        if(res?.data?.data?.length < 10){
+            dispatch(setHasMore(false))
+        }
         toast.success(res.data.message)
     } catch (error) {
         dispatch(setError(error.message))
@@ -177,6 +181,7 @@ export const updatePost = ({title, description, category, address}, postId) => a
 const initialState = {
     post: {},
     searchPost: {},
+    hasMore: true,
     loading: false,
     error: null
 }
@@ -203,9 +208,17 @@ const postSlice = createSlice({
             state.error = action.payload
         },
         setSearchPost: (state, action) => {
-            state.searchPost = action.payload,
+            if(state.searchPost.length > 0){
+                state.searchPost = [...state.searchPost, ...action.payload]
+            }
+            else{
+                state.searchPost = action.payload
+            }
             state.loading = false,
             state.error = null
+        },
+        setHasMore: (state, action) => {
+            state.hasMore = action.payload
         },
         resetPost: () => {}
     }

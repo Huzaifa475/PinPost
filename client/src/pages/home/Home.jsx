@@ -10,6 +10,7 @@ import { fetchPostBasedOnLocation } from '../../redux/post'
 import { createReview, fetchPostReview, resetReview } from '../../redux/review'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 const UpdateMapCenter = ({ newCenter }) => {
   const map = useMap()
@@ -31,8 +32,10 @@ function Home() {
   const [rating, setRating] = useState('')
   const [toastId, setToastId] = useState(null)
   const [whether, setWhether] = useState(null)
-  const { searchPost, loading: postLoading, error: postError } = useSelector(state => state.post)
-  const { searchReview, loading: reviewLoading, error:reviewError } = useSelector(state => state.review)
+  const [page, setPage] = useState(1)
+  const [query, setQuery] = useState({ address: "", category: "" })
+  const { searchPost, loading: postLoading, error: postError, hasMore: postHasMore } = useSelector(state => state.post)
+  const { searchReview, loading: reviewLoading, error: reviewError } = useSelector(state => state.review)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -43,25 +46,25 @@ function Home() {
   }, [setLocation])
 
   useEffect(() => {
-    if(postLoading){
+    if (postLoading) {
       const id = toast.loading('Loading, Wait for some time', {
         duration: Infinity
       })
       setToastId(id)
     }
-    else{
+    else {
       toast.dismiss(toastId)
     }
   }, [postLoading])
 
   useEffect(() => {
-    if(reviewLoading){
+    if (reviewLoading) {
       const id = toast.loading('Loading, Wait for some time', {
         duration: Infinity
       })
       setToastId(id)
     }
-    else{
+    else {
       toast.dismiss(toastId)
     }
   }, [reviewLoading])
@@ -83,8 +86,9 @@ function Home() {
   }
 
   const handleSearch = async () => {
-    dispatch(fetchPostBasedOnLocation({ address: search, category }))
-
+    dispatch(fetchPostBasedOnLocation({ address: search, category }, page))
+    setQuery({ address: search, category })
+    setPage(1)
     setSearch('')
     setCategory('')
 
@@ -136,7 +140,7 @@ function Home() {
       });
     }
   }
-  
+
   const handleCreateReview = (postId) => {
     dispatch(createReview({ title, rating }, postId))
 
@@ -144,6 +148,16 @@ function Home() {
     setRating('')
   }
 
+  console.log(postHasMore);
+  
+
+  const fetchMorePost = () => {
+    console.log('inside fetch more function');
+    
+    const nextPage = page + 1
+    setPage(nextPage)
+    dispatch(fetchPostBasedOnLocation({ address: query.address, category: query.category }, nextPage))
+  }
   return (
     <div className='home-main-container'>
       <div className="home-left-container">
@@ -167,7 +181,7 @@ function Home() {
               null
           }
         </MapContainer>
-        <Toaster/>
+        <Toaster />
       </div>
       <div className="home-right-container">
         {
@@ -193,20 +207,30 @@ function Home() {
                 </select>
               </div>
               <div className="posts-container">
-
-                {
-                  searchPost && searchPost.length > 0 ?
-                    searchPost.map((post) => (
-                      <div className="container-post" key={post._id} onClick={() => handlePost(post)}>
-                        <h1>{post.title}</h1>
-                        <h1>{post.description}</h1>
-                        <h1>{post.category}</h1>
-                        <h1>{post.address}</h1>
-                      </div>
-                    ))
-                    :
-                    <div>No post to fetch</div>
-                }
+                <InfiniteScroll
+                  dataLength={searchPost.length || 0}
+                  next={() => {
+                    console.log('Calling');
+                    
+                    fetchMorePost()}}
+                  hasMore={true}
+                  loader={postLoading ? <></> : <p>Loading More Posts</p>}
+                  endMessage={postHasMore === false ? <p>You Have Viewed all Posts</p> : null}
+                >
+                  {
+                    searchPost && searchPost.length > 0 ?
+                      searchPost.map((post) => (
+                        <div className="container-post" key={post._id} onClick={() => handlePost(post)}>
+                          <h1>{post.title}</h1>
+                          <h1>{post.description}</h1>
+                          <h1>{post.category}</h1>
+                          <h1>{post.address}</h1>
+                        </div>
+                      ))
+                      :
+                      <div>No post to fetch</div>
+                  }
+                </InfiniteScroll>
               </div>
               <div className="profile-button">
                 <button onClick={handleProfile}>Profile</button>
